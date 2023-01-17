@@ -1,12 +1,9 @@
-const getImages = (query) => {
-    fetch(`https://api.pexels.com/v1/search?query=${query}`, {method: "GET",
-                headers: {Authorization:"563492ad6f91700001000001b07d2d6695bb4807990af72dd4caaa46"}})
-.then((rawImages)=> {
-    return rawImages.json()
-}).then((jsonImages)=> {
-    renderImages(jsonImages.photos)
-    replace9mins(jsonImages.photos)
-}).catch(err => console.log(err))
+const renderCarousel = (forestImages) => {
+    let parent = document.querySelectorAll(".d-block.w-100")
+    for (let i = 0; i< parent.length;i++)
+    {
+        parent[i].setAttribute("src", `${forestImages[i].src.original}`)        
+    }
 }
 
 const getForest = () => {
@@ -16,6 +13,18 @@ const getForest = () => {
     return rawImages.json()
 }).then((jsonImages)=> {
     renderCarousel(jsonImages.photos)
+}).catch(err => console.log(err))
+}
+
+const getImages = (query) => {
+    fetch(`https://api.pexels.com/v1/search?query=${query}`, {method: "GET",
+                headers: {Authorization:"563492ad6f91700001000001b07d2d6695bb4807990af72dd4caaa46"}})
+.then((rawImages)=> {
+    return rawImages.json()
+}).then((jsonImages)=> {
+    renderImages(jsonImages.photos)
+    replace9mins(jsonImages.photos)
+    viewCards(jsonImages.photos)
 }).catch(err => console.log(err))
 }
 
@@ -40,6 +49,19 @@ function hideCards() {
 }
 hideCards()
 
+function viewCards(viewPhoto) {
+    let buttons = document.querySelectorAll(".card-body button:nth-of-type(1)")
+    let modal = document.getElementById("modal-image")
+    for (let i=0; i<buttons.length; i++)
+    {
+        buttons[i].addEventListener("click", function()
+        {
+            modal.setAttribute("src", `${viewPhoto[i].src.original}`) 
+        })
+    }
+}
+viewCards()
+
 const replace9mins = (photoIDs) => {
     let containers = document.querySelectorAll("small")
     
@@ -56,10 +78,4 @@ function searchImages () {
     getImages(userSearch)
 }
 
-const renderCarousel = (forestImages) => {
-    let parent = document.querySelectorAll(".d-block.w-100")
-    for (let i = 0; i< parent.length;i++)
-    {
-        parent[i].setAttribute("src", `${forestImages[i].src.original}`)        
-    }
-}
+
